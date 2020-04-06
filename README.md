@@ -26,3 +26,39 @@ Most of the rapidly manufacturable ventilator design teams we are talking to are
 3. If you're new to Arduino, work through some of the [Built-in](https://www.arduino.cc/en/Tutorial/BuiltInExamples) tutorials to familize yourself with how Arduino works (especially those relating to Serial communication).
 4. Download/Clone the code from this repo and upload it to your Arduino Board using the Arduino IDE
 5. You can power the arduino by either plugging in a standard [9V power supply](https://www.amazon.com/Arduino-Power-Supply-Adapter-110V/dp/B018OLREG4) to the power plug or by plugging it into a USB port. Plugging your Arduino into a Raspberry Pi via the USB cable should give it sufficent power to run, provided that the Raspberry Pi itself is plugged in to a power supply with sufficient amperage to run both the Pi and the Arduino.
+
+
+
+
+
+*** Byte based Comms
+
+
+|Data | Register | Size(Bytes) | Description|
+| --- | --- | --- | --- |
+|EEPROM | 
+|Application Identifier |0| 2| Used internally to verify data table has been written at least ones |
+|Control Table Version |2| 2| Use to verify control table matches with what software is expecting|
+|Harware Model |4| 2| ID of hardware model running( i.e. Arduino Uno, Arduino Mega, etc)|
+|Harware Serial |6| 2| Serial nunber assigned to HW|
+|Firmware Version |8| 2|
+|Communication Protocol Version |10| 2|
+|Ventilator ID |12| 2|
+|RAM |
+|Application Identifier |14| 2|
+|IE Ratio |16| 2|
+|Peak Inspiratory Pressure |18| 2|
+|Tidal Volume		 |20| 2|
+|PEEP		 |22| 2|
+
+|Header 1| Header 2| ID | Length | Instruction | Param 1 | ... | Param N | Checksum|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|0xFF | 0xFF | ID | Length | Instruction | Param 1 | Params | Param N | Checksum
+
+|Instruction | Data |
+| --- | --- |
+|Ping | 0x01|
+|Read | 0x02|
+|Write | 0x03|
+|Reboot | 0x04|
+|Reset | 0x05|

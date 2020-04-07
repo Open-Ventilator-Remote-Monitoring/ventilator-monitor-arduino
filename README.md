@@ -37,6 +37,17 @@ Inspired by ROBOTIS DYNAMIXEL 1.0 protocol
 
 http://emanual.robotis.com/docs/en/dxl/protocol1/
 
+####Data Register Table (RAM)
+
+|Data | Register | Size(Bytes) | Description|
+| --- | --- | --- | --- |
+|IE Ratio |0| 2|
+|Peak Inspiratory Pressure |2| 2|
+|Tidal Volume		 |4| 2|
+|Respiratory Rate		 |6| 2|
+|PEEP		 |8| 2|
+
+
 
 ####Config Register Table (EEPROM)
 |Data | Register | Size(Bytes) | Description|
@@ -53,22 +64,27 @@ http://emanual.robotis.com/docs/en/dxl/protocol1/
 |Auto Report Interval|16| 2|
 
 
-####Data Register Table (RAM)
 
-|IE Ratio |0| 2|
-|Peak Inspiratory Pressure |2| 2|
-|Tidal Volume		 |4| 2|
-|Respiratory Rate		 |6| 2|
-|PEEP		 |8| 2|
+####Host Packet (from Pi)
 
 |Header 1| Header 2 | Length | Instruction | Param 1 | ... | Param N | Checksum|
 | ---  | --- | --- | --- | --- | --- | --- | --- |
 |0xFF | 0xFF | Length | Instruction | Param 1 | Params | Param N | Checksum
 
+
+####Reply Packet (From Arduino)
+
+|Header 1| Header 2 | Length | Error | Param 1 | ... | Param N | Checksum|
+| ---  | --- | --- | --- | --- | --- | --- | --- |
+|0xFF | 0xFF | Length | Error | Param 1 | Params | Param N | Checksum
+
+
+
+####Instructions
 |Instruction | Data |
 | --- | --- |
 |Ping | 0x01|
-|Read Ventilator | 0x02|
+|Read Data | 0x02|
 |Reboot | 0x03|
 |Reset | 0x04|
 |Read Config | 0x05|

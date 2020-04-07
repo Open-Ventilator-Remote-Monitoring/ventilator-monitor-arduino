@@ -14,28 +14,36 @@ uint32_t __omReportTimeTracker = 0; //Specifically assigned as 32-bit long inste
 /********BEGIN PUBLIC FUNCTIONS********/
 void omInit(void)
 {
+  //This function must be called in setup() by the user.
   __omStartupCheck();
   Serial.print("Open Monitor Auto Report Interval: "); Serial.print(EEPROM.read(OM_AUTO_REPORT_INTERVAL_ADDR)); Serial.println(" Seconds");
 }
 
 void omAutoReport(void)
 {
-  
+  //Here we take care of automatically reporting all the ventilator data periodically so the user only needs to call this function once per loop.
+  //We should consider setting up an ISR on a timer that will trigger this periodically instead so the user only needs to call setup and we handle the rest.
   if(EEPROM.read(OM_AUTO_REPORT_STATUS_ADDR))
   {
     if(OM_DEBUG_ENABLED){Serial.print("OMDEBUG TIME SINCE LAST REPORT: "); Serial.println(millis() - __omReportTimeTracker);}
+
+    //If the time since the last report passes the specified report interval, transmit the ventilator data packet again.
     if(millis() - __omReportTimeTracker >= 1000*EEPROM.read(OM_AUTO_REPORT_INTERVAL_ADDR))
     {
       if(OM_DEBUG_ENABLED){Serial.println("OMDEBUG TRANSMITTING DATA");}
-      omTransmitData(); // write all data
+      
+      omTransmitData(); //Transmit ventilator data packet.
+      
       if(OM_DEBUG_ENABLED){Serial.println();}
-      __omReportTimeTracker = millis();
+      
+      __omReportTimeTracker = millis(); //Reset report time tracker.
     }
   }
 }
 
 void omUpdateVentilatorData(int ieRatio, int peakInspiratoryPressure, int tidalVolume, int respiratoryRate, int peep)
 {
+  //Update ventilator data buffer. The buffer is segmented into 8-bit chunks, so each 16-bit data point must be placed into two array entries.
   __omVentilatorData[OM_IE_RATIO_ADR] = ieRatio % 256;
   __omVentilatorData[OM_IE_RATIO_ADR+1] = (ieRatio >> 8) % 256;
   __omVentilatorData[OM_PEAK_INSP_PRESSURE_ADR] = peakInspiratoryPressure % 256;
@@ -47,7 +55,7 @@ void omUpdateVentilatorData(int ieRatio, int peakInspiratoryPressure, int tidalV
   __omVentilatorData[OM_PEEP_ADR] = peep % 256;
   __omVentilatorData[OM_PEEP_ADR+1] = (peep >> 8) % 256;
 }
-void omTransmitData()
+void omTransmitData(void)
 {
   __omWritePacket(__omVentilatorData, 0, 10); //This isn't great. We can only transmit 16-bit datatypes, and calls like this require us to specify data length in byte size instead of datatype size (i.e. this is 5 ints, but we need to call writePacket with 10 bytes).
 }
@@ -59,7 +67,8 @@ void omTransmitData()
 void __omStartupCheck(void)
 {
   int applicationId =  __omReadEEPROM(0,2);
-
+  
+  //If the application ID in EEPROM doesn't match our specified application ID, we need to re-write all the EEPROM data.
   if ((applicationId != OM_APPLCIATION_ID))
   {
     Serial.println("OpenMonitor discovered out-of-date EEPROM data. Updating to current version...");
@@ -76,6 +85,7 @@ void __omStartupCheck(void)
 
 long __omReadEEPROM(int address, int dataLength)
 {
+  //Here we just read and return some arbitrary data from EEPROM.
   long data = 0;
   for(int a = 0; a < dataLength ; a++)
   {
@@ -86,7 +96,9 @@ long __omReadEEPROM(int address, int dataLength)
 
 void __omWriteEEPROM(int address, int data, int dataLength)
 {
-  Serial.println(data);
+  //Write some arbitrary data to EEPROM.
+  if(OM_DEBUG_ENABLED){Serial.print("OMDEBUG WRITING "); Serial.print(data); Serial.println(" TO EEPROM");}
+  
   for(int a = 0; a < dataLength ; a++)
   {
      EEPROM.write(address + a, (data >> (8*a)) & 0xff);
@@ -104,6 +116,8 @@ void __omWritePacket(unsigned char dataArray[], int dataStart, int dataLength)
   Serial.write(0xFF); //header 1
   Serial.write(0xFF); //header 2
   Serial.write(packetLength); //length of packet
+  
+  //Loop over each byte and transmit it over the serial line.
   for(int i = dataStart; i < dataStart + dataLength; i++)
   {
     tempChecksum = tempChecksum + dataArray[i];

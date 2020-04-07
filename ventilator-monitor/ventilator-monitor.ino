@@ -12,22 +12,20 @@ int tidalVolume = 0;
 int respiratoryRate = 0;
 int peep = 0;
 
-// the setup function runs once when you press reset or power the board
+//Setup runs once only. It will happen on boot or reset.
 void setup() 
 {  
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
-  
-  // initialize serial communication at 9600 bits per second:
+  //Initialize Serial port at 9600 baud.
   Serial.begin(9600);
 
-  //Initialize OpenMonitor library.
+  //Initialize the OpenMonitor library.
   omInit();
 }
 
-// the loop function runs over and over again forever
+//Loop cycles forever. First loop call happens immediately after setup().
 void loop() 
 {
+  //Re-assign fake data.
   ieRatio = random(1, 4);
   peakInspiratoryPressure = random(300, 800);
   tidalVolume = random(300, 800);
@@ -35,7 +33,8 @@ void loop()
   peep = random(5, 10);
   
   omUpdateVentilatorData(ieRatio, peakInspiratoryPressure, tidalVolume, respiratoryRate, peep); //Update OpenMonitor ventilator data buffer.
-  omAutoReport();
   
-  delay(500);
+  omAutoReport(); //Tell OpenMonitor to automatically report its data, if enabled.
+  
+  delay(500); //Delay for debugging purposes.
 }

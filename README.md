@@ -33,7 +33,7 @@ Most of the rapidly manufacturable ventilator design teams we are talking to are
 
 *** Byte based Comms
 
-
+####Config Register Table (EEPROM)
 |Data | Register | Size(Bytes) | Description|
 | --- | --- | --- | --- |
 |EEPROM | 
@@ -44,21 +44,27 @@ Most of the rapidly manufacturable ventilator design teams we are talking to are
 |Firmware Version |8| 2|
 |Communication Protocol Version |10| 2|
 |Ventilator ID |12| 2|
-|RAM |
-|Application Identifier |14| 2|
-|IE Ratio |16| 2|
-|Peak Inspiratory Pressure |18| 2|
-|Tidal Volume		 |20| 2|
-|PEEP		 |22| 2|
+|Auto Report Status |14| 2|
+|Auto Report Interval|16| 2|
 
-|Header 1| Header 2| ID | Length | Instruction | Param 1 | ... | Param N | Checksum|
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|0xFF | 0xFF | ID | Length | Instruction | Param 1 | Params | Param N | Checksum
+
+####Data Register Table (RAM)
+
+|IE Ratio |0| 2|
+|Peak Inspiratory Pressure |2| 2|
+|Tidal Volume		 |4| 2|
+|Respiratory Rate		 |6| 2|
+|PEEP		 |8| 2|
+
+|Header 1| Header 2 | Length | Instruction | Param 1 | ... | Param N | Checksum|
+| ---  | --- | --- | --- | --- | --- | --- | --- |
+|0xFF | 0xFF | Length | Instruction | Param 1 | Params | Param N | Checksum
 
 |Instruction | Data |
 | --- | --- |
 |Ping | 0x01|
-|Read | 0x02|
-|Write | 0x03|
-|Reboot | 0x04|
-|Reset | 0x05|
+|Read Ventilator | 0x02|
+|Reboot | 0x03|
+|Reset | 0x04|
+|Read Config | 0x05|
+|Write Config | 0x06|

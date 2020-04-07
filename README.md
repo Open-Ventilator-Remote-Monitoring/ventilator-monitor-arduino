@@ -33,6 +33,11 @@ Most of the rapidly manufacturable ventilator design teams we are talking to are
 
 *** Byte based Comms
 
+Inspired by ROBOTIS DYNAMIXEL 1.0 protocol
+
+http://emanual.robotis.com/docs/en/dxl/protocol1/
+
+
 ####Config Register Table (EEPROM)
 |Data | Register | Size(Bytes) | Description|
 | --- | --- | --- | --- |

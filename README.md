@@ -31,13 +31,13 @@ Most of the rapidly manufacturable ventilator design teams we are talking to are
 
 
 
-*** Byte based Comms
+### Byte based Comms
 
 Inspired by ROBOTIS DYNAMIXEL 1.0 protocol
 
 http://emanual.robotis.com/docs/en/dxl/protocol1/
 
-####Data Register Table (RAM)
+#### Data Register Table (RAM)
 
 |Data | Register | Size(Bytes) | Description|
 | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ http://emanual.robotis.com/docs/en/dxl/protocol1/
 
 
 
-####Config Register Table (EEPROM)
+#### Config Register Table (EEPROM)
 |Data | Register | Size(Bytes) | Description|
 | --- | --- | --- | --- |
 |EEPROM | 
@@ -65,14 +65,14 @@ http://emanual.robotis.com/docs/en/dxl/protocol1/
 
 
 
-####Host Packet (from Pi)
+#### Host Packet (from Pi)
 
 |Header 1| Header 2 | Length | Instruction | Param 1 | ... | Param N | Checksum|
 | ---  | --- | --- | --- | --- | --- | --- | --- |
 |0xFF | 0xFF | Length | Instruction | Param 1 | Params | Param N | Checksum
 
 
-####Reply Packet (From Arduino)
+#### Reply Packet (From Arduino)
 
 |Header 1| Header 2 | Length | Error | Param 1 | ... | Param N | Checksum|
 | ---  | --- | --- | --- | --- | --- | --- | --- |
@@ -80,7 +80,7 @@ http://emanual.robotis.com/docs/en/dxl/protocol1/
 
 
 
-####Instructions
+#### Instructions
 |Instruction | Data |
 | --- | --- |
 |Ping | 0x01|
